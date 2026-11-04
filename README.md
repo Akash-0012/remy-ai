@@ -1,90 +1,147 @@
-# Remy AI — Home Inventory & Pantry Assistant
+# Remy AI | Smart Household Inventory Management
 
-This project keeps the Remy v6 UI design and connects it to the existing Flask/SQLite/Groq backend features.
+<p align="center">
+  <strong>An AI-powered inventory management system designed for modern Indian households.</strong>
+</p>
 
-## Project structure
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-Backend-blue?logo=python" alt="Python">
+  <img src="https://img.shields.io/badge/Flask-Web_Framework-black?logo=flask" alt="Flask">
+  <img src="https://img.shields.io/badge/SQLite-Database-blue?logo=sqlite" alt="SQLite">
+  <img src="https://img.shields.io/badge/AI-Powered-purple" alt="AI Powered">
+</p>
 
-```text
-Remy_AI_Professional_Project/
-├── app.py                  # Flask backend + existing API routes/logic
-├── requirements.txt
-├── .env.example
-├── .gitignore
-├── inventory.db            # created automatically at first run (do not share)
-├── uploads/
-│   └── receipts/           # original receipt files
-└── frontend/
-    ├── index.html          # Remy v6 UI markup
-    ├── css/
-    │   └── styles.css      # extracted v6 styles
-    └── js/
-        └── app.js          # frontend behavior + API integration
+---
+
+## 📸 Application Dashboard
+
+<p align="center">
+  <img src="screenshots/dashboard.png" alt="Remy AI Dashboard" width="100%">
+</p>
+
+## 📌 About the Project
+
+**Remy AI** is an intelligent household inventory management application that simplifies how users organize, track, and manage everyday household items.
+
+It combines traditional inventory management with AI-powered product recognition, expiry tracking, and intelligent assistance to create a centralized household management experience.
+
+Designed specifically for Indian households, Remy AI supports local measurement units, Indian currency, and practical household storage organization.
+
+## ✨ Key Features
+
+- **Smart Inventory Management:** Organize groceries, household supplies, and personal assets.
+- **AI-Powered Product Scanning:** Extract product information from uploaded images.
+- **Expiry & Warranty Tracking:** Monitor food expiry dates and household asset warranties.
+- **Receipt Scanning:** Extract available information from purchase receipts.
+- **Remy AI Assistant:** Get AI-powered assistance for household inventory and food-related queries.
+- **Inventory Value Tracking:** Monitor the value of household inventory.
+- **Indian Household Support:** ₹ INR, Indian measurement units, and household storage locations.
+
+## 🏗️ Application Architecture
+
+Remy AI follows a client-server architecture connecting the frontend, Flask backend, database, image storage, and AI services.
+
+<p align="center">
+  <img src="screenshots/architecture.png" alt="Remy AI Application Architecture" width="100%">
+</p>
+
+### Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Python | Backend development |
+| Flask | Web application framework |
+| HTML5, CSS3, JavaScript | Frontend development |
+| SQLite | Database management |
+| Groq API | AI model integration |
+| AI Vision Models | Product image analysis |
+
+## 🖼️ Image Processing Workflow
+
+<p align="center">
+  <img src="screenshots/image-workflow.png" alt="Remy AI Image Processing Workflow" width="100%">
+</p>
+
+The workflow illustrates how Remy AI processes uploaded images, validates files, extracts product information using AI, and integrates the results into the inventory.
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Python 3.10 or later
+- Git
+- pip
+
+### Installation
+
+**1. Clone the repository**
+
+```bash
+git clone https://github.com/YOUR_USERNAME/Remy-AI.git
+cd Remy-AI
 ```
 
-## Setup (Windows PowerShell)
+**2. Create and activate a virtual environment**
 
-1. Extract the ZIP into a folder and open a terminal in that folder.
-2. Create a virtual environment:
+```bash
+python -m venv venv
+```
 
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   ```
+Windows:
 
-3. Install packages:
+```bash
+venv\Scripts\activate
+```
 
-   ```powershell
-   python -m pip install -r requirements.txt
-   ```
+Linux / macOS:
 
-4. Create `.env` from `.env.example`, then set a **new** Groq API key. If `.env` is not auto-loaded in your environment, use:
+```bash
+source venv/bin/activate
+```
 
-   ```powershell
-   $env:GROQ_API_KEY="YOUR_NEW_GROQ_API_KEY"
-   ```
+**3. Install dependencies**
 
-5. Start Flask:
+```bash
+pip install -r requirements.txt
+```
 
-   ```powershell
-   python app.py
-   ```
+**4. Configure environment variables**
 
-6. Open `http://127.0.0.1:5000`
+Create a `.env` file in the project root:
 
-7. Check backend status at `http://127.0.0.1:5000/api/health`.
+```env
+GROQ_API_KEY=your_api_key_here
+```
 
-## Features retained/connected
+Use the API key required by your configured AI provider. Never commit API keys to GitHub.
 
-- Flask + SQLite inventory and additive DB migrations
-- Three item types: Food, Household, Asset
-- Product image upload/camera capture (front/back/etc.) and AI scan/review
-- Barcode/QR decoding via ZXing-C++ and Open Food Facts lookup (coverage not guaranteed)
-- Editable item details and inventory saving
-- Shopping list database CRUD
-- Receipt image extraction, review, add extracted item to inventory
-- Receipt Vault stores original image/PDF files and metadata in SQLite + `uploads/receipts/`
-- View/download/delete saved receipts
-- Remy AI chat with current inventory context and dietary recipe mode
-- Expiry/warranty fields, item quantity/unit/price/storage, brand/barcode/notes
+**5. Run the application**
 
-## Important notes
+```bash
+python app.py
+```
 
-- **AI features require a Groq API key** and model access. The project does not include a key.
-- Product vision can inspect up to three images per AI request (the backend accepts up to six images and uses barcode decoding across them). It cannot guarantee that every barcode/QR or expiry date is readable.
-- Receipt AI extraction currently supports image files (JPG/PNG/WEBP). PDF receipts can be stored in the Receipt Vault but are not AI-extracted by this backend.
-- The current backend validation requires expiry dates for food and household items. Assets may use an optional warranty date.
-- The database is created at project root. Back up `inventory.db` together with `uploads/receipts/` before moving the app.
-- Never commit `.env`, `inventory.db`, or private receipts.
-- This is a local development Flask app, not production deployment. Before public deployment, add authentication, CSRF protections, upload hardening, and a production WSGI server.
+Open the application in your browser:
 
-## Backend API routes
+```text
+http://127.0.0.1:5000
+```
 
-- `GET /api/inventory`, `POST /api/inventory`, `DELETE /api/inventory/<id>`
-- `POST /api/analyze_images` (legacy `POST /api/analyze_image` also retained)
-- `GET /api/shopping`, `POST /api/shopping`, `DELETE /api/shopping/<id>`
-- `POST /api/analyze_receipt`
-- `GET /api/receipts`, `POST /api/receipts`
-- `GET /api/receipts/<id>/file` (supports `?download=1`)
-- `DELETE /api/receipts/<id>`
-- `POST /api/chat`
-- `GET /api/health`
+## 🔮 Future Improvements
+
+- Advanced barcode and QR code recognition
+- Smart shopping list generation
+- Low-stock notifications
+- Inventory analytics and consumption insights
+
+## 👨‍💻 Author
+
+**Akash Singh**
+
+[GitHub](https://github.com/YOUR_USERNAME) · [LinkedIn](YOUR_LINKEDIN_URL)
+
+---
+
+<p align="center">
+  <strong>Remy AI — Smarter Inventory Management for Everyday Living.</strong>
+</p>
