@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remy AI — Home Inventory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+<div class="brand"><div class="logo">r</div><div class="brandname">remy<span style="color:#d9f36a">.</span><small>smart home inventory</small></div></div>
+<div class="navlabel">Workspace</div>
+<nav class="nav">
+<button class="active" data-page="inventory"><span class="ico">▦</span><span>Inventory</span></button>
+<button data-page="shopping"><span class="ico">☷</span><span>Shopping List</span></button>
+<button data-page="assistant"><span class="ico">✳</span><span>Remy AI Assistant</span></button>
+<button data-page="receipts"><span class="ico">▤</span><span>Receipt Vault</span></button>
+</nav>
+<div class="sidebar-bottom">
+<div class="side-tip"><span class="spark">✦</span><b>A little smarter every day</b><p>Remy helps you keep track of what you have, what’s running low, and what to use next.</p></div>
+<div class="profile"><div class="avatar">A</div><div><b>My household</b><small>Personal workspace</small></div><span style="margin-left:auto;color:#91a99a">⌄</span></div>
+</div>
+</aside>
+<main>
+<div class="topbar"><div class="crumb">Workspace <span style="padding:0 7px">/</span> <strong id="crumb">Inventory</strong></div><div class="top-actions"><div class="datechip" id="today-chip">◷ &nbsp; Today</div><button class="iconbtn" onclick="toast('You’re all caught up!')" title="Notifications">♧<span class="dot"></span></button><button class="iconbtn" onclick="toast('Settings preview')" title="Settings">⚙</button></div></div>
+
+<section class="page active" id="page-inventory">
+<div class="heading"><div><div class="eyebrow">Your home, in good order</div><h1>Good evening, Akash <span style="font-size:25px">✦</span></h1><p>Here’s what’s happening around your household today.</p></div><button class="primary" onclick="openModal()">＋ &nbsp; Add item</button></div>
+<div class="stats">
+<div class="stat"><div class="stat-top">Total items <span class="stat-icon" style="background:#e9f3ec">▦</span></div><strong>128</strong><small>Items currently saved</small></div>
+<div class="stat"><div class="stat-top">Inventory value <span class="stat-icon" style="background:#f3eee5">₹</span></div><strong>₹ 8,460</strong><small>Sum of saved item prices</small></div>
+<div class="stat"><div class="stat-top">Expiring soon <span class="stat-icon" style="background:#fff0e4">◷</span></div><strong>6</strong><small><span style="color:#bd7a42;font-weight:700">Needs attention</span> in 7 days</small></div>
+<div class="stat"><div class="stat-top">Shopping needed <span class="stat-icon" style="background:#e9edf8">☷</span></div><strong>4</strong><small>Current list total</small></div>
+</div>
+<div class="layout">
+<div style="display:grid;gap:18px">
+<div class="card"><div class="cardhead"><div><h2>Your inventory</h2><p>Everything in your home, organized by category.</p></div></div>
+<div class="categorygrid">
+<button class="category category-action" onclick="openCategoryInventoryModal('food')"><div class="catemoji" style="background:#e8f3e9">🥑</div><b>Food & groceries</b><small>Fresh, pantry & packaged food</small><div class="catfoot"><span>74 items</span><span>₹ 4,280</span></div><div class="progress"><span style="width:68%"></span></div></button>
+<button class="category category-action" onclick="openCategoryInventoryModal('household')"><div class="catemoji" style="background:#f4eaf0">🧴</div><b>Household supplies</b><small>Cleaning & daily essentials</small><div class="catfoot"><span>36 items</span><span>₹ 2,140</span></div><div class="progress"><span style="width:42%;background:#b78ba9"></span></div></button>
+<button class="category category-action" onclick="openCategoryInventoryModal('asset')"><div class="catemoji" style="background:#eaf0f8">🔌</div><b>Assets & equipment</b><small>Appliances & valuables</small><div class="catfoot"><span>18 items</span><span>₹ 2,040</span></div><div class="progress"><span style="width:28%;background:#7897c0"></span></div></button>
+</div></div>
+<div class="card"><div class="cardhead"><div><h2>Recently added</h2><p>Latest additions to your household</p></div><button class="textlink" onclick="openInventoryListModal()">See all →</button></div>
+<div class="inventory-tools"><input id="inventory-search" type="search" placeholder="Search inventory…" oninput="renderInventory()"><button class="textlink" id="inventory-filter-reset" onclick="showAllInventory()">Show all items</button></div><div class="productlist" id="inventoryproducts"></div></div>
+</div>
+<div style="display:grid;gap:18px">
+<div class="card"><div class="cardhead"><div><h2>Expiry watch</h2><p>Items that need your attention</p></div><button class="textlink" onclick="openExpiryListModal()">View all →</button></div>
+<div class="expiry" id="expiry-watch"><p class="formhint">Loading expiry dates from your inventory…</p></div></div>
+<div class="card"><div class="cardhead"><div><h2>Inventory value</h2><p>Estimated value by category</p></div><span class="tag green">This month</span></div>
+<div class="chartwrap"><div class="chart" id="category-value-chart"></div><div class="chartlegend" id="category-value-legend"></div></div></div>
+</div></div>
+</section>
+
+<section class="page" id="page-shopping">
+<div class="heading"><div><div class="eyebrow">Plan ahead, shop smarter</div><h1>Shopping list</h1><p>Keep track of what you need for your next trip to the store.</p></div><button class="primary" onclick="addShopping()">＋ &nbsp; Add to list</button></div>
+<div class="stats"><div class="stat"><div class="stat-top">Items to buy <span class="stat-icon" style="background:#e9f3ec">☷</span></div><strong id="shoppingcount">4</strong><small>Current saved list</small></div><div class="stat"><div class="stat-top">Estimated total <span class="stat-icon" style="background:#f3eee5">₹</span></div><strong>₹ 620</strong><small>Prices not yet tracked in list</small></div><div class="stat"><div class="stat-top">Completed <span class="stat-icon" style="background:#e8f2e9">✓</span></div><strong id="completedcount">2</strong><small>Checked in this session</small></div><div class="stat"><div class="stat-top">List status <span class="stat-icon" style="background:#e9edf8">✦</span></div><strong>Ready</strong><small>Current shopping list</small></div></div>
+<div class="sectiongrid"><div class="card"><div class="cardhead"><div><h2>My shopping list</h2><p>Check off items as you shop.</p></div><button class="secondary" onclick="toast('List shared (preview)')">↗ Share list</button></div>
+<div id="shoppingitems"><div class="shoppingrow"><input type="checkbox" onchange="checkShopping(this)"><div class="itemmeta"><b>Milk</b><small>Dairy · 1 L</small></div><span class="amount">₹ 58</span></div><div class="shoppingrow"><input type="checkbox" onchange="checkShopping(this)"><div class="itemmeta"><b>Onions</b><small>Vegetables · 1 kg</small></div><span class="amount">₹ 40</span></div><div class="shoppingrow"><input type="checkbox" onchange="checkShopping(this)"><div class="itemmeta"><b>Cooking oil</b><small>Grocery · 1 L</small></div><span class="amount">₹ 160</span></div><div class="shoppingrow"><input type="checkbox" onchange="checkShopping(this)"><div class="itemmeta"><b>Toothpaste</b><small>Personal care · 1 tube</small></div><span class="amount">₹ 95</span></div><div class="shoppingrow"><input type="checkbox" checked onchange="checkShopping(this)"><div class="itemmeta"><b style="text-decoration:line-through;color:#89938d">Tea powder</b><small>Grocery · 250 g</small></div><span class="amount">₹ 125</span></div><div class="shoppingrow"><input type="checkbox" checked onchange="checkShopping(this)"><div class="itemmeta"><b style="text-decoration:line-through;color:#89938d">Bath soap</b><small>Personal care · 2 bars</small></div><span class="amount">₹ 70</span></div></div></div>
+<div style="display:grid;gap:18px"><div class="card"><div class="cardhead"><div><h2>Suggested to restock</h2><p>Based on your inventory</p></div><span class="tag orange">Low stock</span></div><div class="product"><div class="productpic">🧂</div><div><b>Salt</b><small>Pantry · Almost empty</small></div><button class="textlink" onclick="toast('Salt added to shopping list')">＋ Add</button></div><div class="product"><div class="productpic">🧽</div><div><b>Dish sponge</b><small>Cleaning · Running low</small></div><button class="textlink" onclick="toast('Dish sponge added')">＋ Add</button></div><div class="product"><div class="productpic">🍚</div><div><b>Rice</b><small>Pantry · 15% remaining</small></div><button class="textlink" onclick="toast('Rice added')">＋ Add</button></div></div><div class="insight"><div class="bulb">✦</div><div><h3>Shopping tip</h3><p>Check your pantry before shopping. Remy can help you avoid buying items you already have.</p><button onclick="showPage('assistant')">Ask Remy →</button></div></div></div></div>
+</section>
+
+<section class="page" id="page-assistant">
+<div class="heading"><div><div class="eyebrow">Your helpful household companion</div><h1>Remy AI Assistant</h1><p>Ask about your inventory, recipes, expiry dates, or household planning.</p></div><span class="tag green">✦ AI assistant</span></div>
+<div class="sectiongrid" style="grid-template-columns:minmax(0,1.6fr) minmax(240px,.8fr)">
+<div class="chatbox"><div class="chathead"><div class="remyavatar">✳</div><div><b>Remy</b><small>Your home & pantry assistant</small></div><span class="online">● Ready to help</span></div><div class="chatmessages" id="chatmessages"><div class="message">Hi Akash! 👋 I’m Remy. I can help you make the most of what’s already in your home.<br><br>Want a recipe using ingredients that need to be used soon, or help planning your next grocery trip?<small>Remy · Just now</small></div><div class="message user">What can I cook with ingredients expiring soon?<small>You · Just now</small></div><div class="message">You have paneer and tomatoes coming up for expiry. A quick **paneer bhurji** could be a great option. You’ll need paneer, tomatoes, onion, and your usual spices.<br><br>Would you like a simple recipe with quantities?<small>Remy · Just now</small></div></div><div class="suggestions"><button onclick="suggest('What is expiring this week?')">⏳ Expiring this week</button><button onclick="suggest('Suggest a recipe from my pantry')">🥘 Pantry recipe</button><button onclick="suggest('What should I restock?')">🛒 Restock ideas</button></div><form class="chatinput" onsubmit="sendChat(event)"><input id="chatinput" placeholder="Ask Remy anything about your home..." autocomplete="off"><button type="submit">↑</button></form></div>
+<div style="display:grid;gap:16px"><div class="card"><div class="cardhead"><div><h2>What Remy can help with</h2><p>Built around your household</p></div></div><div class="product"><div class="productpic">🥗</div><div><b>AI Chef</b><small>Recipes using what you have</small></div></div><div class="product"><div class="productpic">📦</div><div><b>Inventory Q&A</b><small>Find items and quantities</small></div></div><div class="product"><div class="productpic">⏰</div><div><b>Expiry planning</b><small>Use items before they expire</small></div></div><div class="product"><div class="productpic">🛍️</div><div><b>Shopping help</b><small>Build a smarter shopping list</small></div></div></div><div class="insight"><div class="bulb">💡</div><div><h3>Try asking</h3><p>“What can I make for dinner with what I have?”</p></div></div></div></div>
+</section>
+
+
+<section class="page" id="page-receipts">
+<div class="heading"><div><div class="eyebrow">PURCHASE HISTORY</div><h1>Receipt Vault</h1><p>Scan once, save the original, and access it whenever you need it.</p></div><button class="secondary" onclick="refreshReceiptVault()">↻ Refresh vault</button></div>
+<div class="stats"><div class="stat"><div class="stat-top">Saved receipts <span class="stat-icon" style="background:#e9f3ec">▤</span></div><strong id="receiptcount">0</strong><small>Saved in your database</small></div><div class="stat"><div class="stat-top">Scanned items <span class="stat-icon" style="background:#e9edf8">✦</span></div><strong>—</strong><small>Items extracted after scan</small></div><div class="stat"><div class="stat-top">Receipt files <span class="stat-icon" style="background:#f3eee5">📄</span></div><strong id="receiptfilecount">0</strong><small>Originals available</small></div><div class="stat"><div class="stat-top">Vault status <span class="stat-icon" style="background:#e9f3ec">✓</span></div><strong>Ready</strong><small>View or download saved files</small></div></div>
+<div class="sectiongrid">
+<div class="card"><div class="cardhead"><div><h2>Scan & save a receipt</h2><p>One upload area for the receipt scan and permanent save workflow.</p></div><span class="tag green">Receipt Vault</span></div>
+<div class="receiptpanel"><div class="receipt-drop"><div style="font-size:31px">🧾</div><h3>Choose your receipt</h3><p>Upload a photo or PDF of your bill. Scan details, review items, then save the original.</p><input type="file" id="receiptfile" accept="image/*,.pdf" hidden onchange="receiptSelected(this)"><div class="receipt-actions"><button class="primary" onclick="document.getElementById('receiptfile').click()">Browse receipt</button><button class="secondary" onclick="document.getElementById('receiptcamera').click()">Capture receipt</button><input type="file" id="receiptcamera" accept="image/*" capture="environment" hidden onchange="receiptSelected(this)"></div><div id="receiptselected" class="formhint">No receipt selected yet.</div></div>
+<div class="receipt-actions" style="margin-top:14px"><button class="secondary" id="scanreceiptbtn" onclick="scanReceiptPreview()" disabled>✦ Scan receipt</button><button class="primary" id="savereceiptbtn" onclick="saveReceiptPreview()" disabled>Save receipt permanently</button></div><p class="formhint">After scanning, detected products appear below. Add products to inventory individually; saving the original receipt is a separate step.</p></div>
+<div id="receiptreview" style="display:none;margin-top:16px"><div class="cardhead"><div><h2>Detected receipt details</h2><p>Review before saving or adding products.</p></div></div><div id="receiptitemsreview"></div></div>
+</div>
+<div class="card"><div class="cardhead"><div><h2>Saved receipts</h2><p>View or download original receipt files.</p></div><span class="tag green">Your vault</span></div><div id="savedreceipts"><p style="font-size:12px;color:#89948d">No receipts saved yet. Upload one to get started.</p></div></div>
+</div></section>
+</main></div>
+
+
+<div class="modalback" id="itemdetailback" onclick="if(event.target===this)closeItemDetails()"><div class="modal"><div class="modalhead"><div><div class="eyebrow">INVENTORY DETAILS</div><h2 id="itemdetailtitle">Item details</h2><p class="wizarddesc">Saved item from your inventory</p></div><button class="close" onclick="closeItemDetails()" aria-label="Close">×</button></div><div id="itemdetailbody"></div><div class="wizardfooter"><button class="secondary" onclick="closeItemDetails()">Close</button></div></div></div>
+<div class="modalback" id="modalback" onclick="if(event.target===this)closeModal()">
+<div class="modal wizard-modal">
+<div class="modalhead"><div><div class="eyebrow">REMY INVENTORY</div><h2 id="wizardtitle">Add an item</h2><p id="wizarddesc" class="wizarddesc">Choose a category to continue.</p></div><div class="wizardheadactions"><button class="secondary wizardtopback" id="wizardtopback" onclick="wizardBack()">← Back</button><button class="close" onclick="closeModal()" aria-label="Close">×</button></div></div>
+<div class="wizardsteps" aria-label="Add item progress"><span class="step active" id="step1"><small>Category</small></span><i></i><span class="step" id="step2"><small>Method</small></span><i></i><span class="step" id="step3"><small>Scan</small></span><i></i><span class="step" id="step4"><small>Details</small></span></div>
+<div id="wizardbody"></div>
+<div class="wizardfooter"><button class="secondary" id="wizardback" onclick="wizardBack()" style="display:none">← Back</button><div style="flex:1"></div><button class="secondary" onclick="closeModal()">Cancel</button><button class="primary" id="wizardnext" onclick="wizardNext()">Continue →</button></div>
+</div></div>
+<div class="list-modal-back" id="inventory-list-modal" onclick="if(event.target===this)closeListModal('inventory-list-modal')" aria-hidden="true">
+<div class="list-modal" role="dialog" aria-modal="true" aria-labelledby="inventory-list-title">
+<div class="list-modal-header"><div><div class="eyebrow">YOUR HOUSEHOLD</div><h2 id="inventory-list-title">All inventory items</h2><p id="inventory-list-count">Search and browse your saved items.</p></div><button class="close" onclick="closeListModal('inventory-list-modal')" aria-label="Close">×</button></div>
+<div class="list-modal-tools"><input id="inventory-modal-search" type="search" placeholder="Search by item, brand, category or location…" oninput="renderInventoryListModal()"></div>
+<div class="list-modal-content" id="inventory-modal-list"></div>
+<div class="list-modal-footer"><button class="secondary" onclick="closeListModal('inventory-list-modal')">Close</button></div>
+</div></div>
+<div class="list-modal-back" id="expiry-list-modal" onclick="if(event.target===this)closeListModal('expiry-list-modal')" aria-hidden="true">
+<div class="list-modal" role="dialog" aria-modal="true" aria-labelledby="expiry-list-title">
+<div class="list-modal-header"><div><div class="eyebrow">EXPIRY TRACKER</div><h2 id="expiry-list-title">All expiry dates</h2><p id="expiry-list-count">Search items by name or storage location.</p></div><button class="close" onclick="closeListModal('expiry-list-modal')" aria-label="Close">×</button></div>
+<div class="list-modal-tools"><input id="expiry-modal-search" type="search" placeholder="Search expiry items…" oninput="renderExpiryListModal()"></div>
+<div class="list-modal-content" id="expiry-modal-list"></div>
+<div class="list-modal-footer"><button class="secondary" onclick="closeListModal('expiry-list-modal')">Close</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script src="/static/js/app.js" defer></script>
+</body></html>
